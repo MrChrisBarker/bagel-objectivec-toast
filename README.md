@@ -1,6 +1,6 @@
 # Bagel - Toast (Android) for iOS
 
-Written entirely in Objective-C here is my take on Toast for iOS. There are many alerntives already out there so Im keepoing my offering complermtly open and away from any dependacy management packages for now.
+Written entirely in Objective-C here is my take on Toast for iOS. There are many alternatives already out there so Im keeping my offering open and away from any dependancy management packages for now.
 
 ## 🎧 Alternative options
 Crumpet for Swift https://github.com/MrChrisBarker/crumpet-swift-toast
