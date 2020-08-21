@@ -9,7 +9,33 @@
 #import "Bagel.h"
 #import "UIView+AddConstraints.h"
 
+// MARK: Mesage Object
+
+@interface Message: NSObject
+@property NSString *message;
+@property UIView *toView;
+@end
+
+@implementation Message
+-(id)initWithMessage:(NSString *)message forView:(UIView *)view {
+    
+    self = [super init];
+    if( !self ) return nil;
+    
+    _message = message;
+    _toView = view;
+    
+    return self;
+
+}
+@end
+
+// MARK: Bagel (tasty 😋)
+
 @implementation Bagel
+
+NSMutableArray *messages;
+bool baking;
 
 + (Bagel *) shared {
     static dispatch_once_t once;
@@ -20,8 +46,8 @@
     return shared;
 }
 
-- (instancetype)init
-{
+- (instancetype)init {
+    
     self = [super init];
     if (self) {
         _backgroundColor = [UIColor blackColor];
@@ -32,11 +58,36 @@
         _bottomConstraint = -46.0;
         _speed = 0.4;
         _wait = 1.8;
+        messages = [[NSMutableArray alloc]init];
     }
     return self;
+    
 }
 
 -(void)pop:(UIView * _Nullable) view withMessage:(NSString * _Nonnull) message {
+    Message *nextMessage = [[Message alloc]initWithMessage:message forView:view];
+    [messages addObject:nextMessage];
+    [self sendMessage];
+}
+
+-(void)sendMessage {
+    
+    Message *nextMessage = messages.firstObject;
+    
+    if (nextMessage == nil || [nextMessage.message isEqual: @""] || baking || messages.count == 0) {
+        return;
+    }
+    
+    [self makeBagel:nextMessage.toView withMessage:nextMessage.message withCompletion:^(bool complete) {
+        [messages removeObjectAtIndex:0];
+        [self sendMessage];
+    }];
+    
+}
+
+-(void)makeBagel:(UIView * _Nullable) view withMessage:(NSString * _Nonnull) message withCompletion:(void(^)(bool finished))completion {
+    
+    baking = true;
     
     UIView *viewToAdd = view;
     if (viewToAdd == nil) {
@@ -76,6 +127,8 @@
             [bagelView setAlpha:0.0];
         } completion:^(BOOL finished) {
             [bagelView removeFromSuperview];
+            baking = false;
+            completion(true);
         }];
     }];
 
